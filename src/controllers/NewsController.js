@@ -3,10 +3,15 @@ import vine, { errors } from "@vinejs/vine";
 import prisma from "../db/db.config.js";
 import { newsSchema } from "../validations/newsValidation.js";
 import NewsApiTransform from "../transform/newsApiTransform.js";
-import { generateRandomNumber, imageValidator, removeImage, uploadImage } from "../utils/helper.js";
+import {
+  generateRandomNumber,
+  imageValidator,
+  removeImage,
+  uploadImage,
+} from "../utils/helper.js";
+import logger from "../config/logger.js";
 
 class NewsController {
-
   static async index(req, res) {
     try {
       let page = Number(req.query.page) || 1;
@@ -54,6 +59,7 @@ class NewsController {
       });
     } catch (error) {
       console.error("error in index:", error);
+      logger.error(error?.message);
       return res.status(400).json({ "Internal Server Error": error });
     }
   }
@@ -105,6 +111,8 @@ class NewsController {
       return res.status(200).json({ news });
     } catch (error) {
       console.error("error in store:", error);
+      logger.error(error?.message);
+
       if (error instanceof errors.E_VALIDATION_ERROR) {
         return res.status(400).json({ errors: error.messages });
       } else {
@@ -148,7 +156,7 @@ class NewsController {
       const { id } = req.params;
       const user = req.user;
       const body = req.body;
-      
+
       const news = await prisma.news.findUnique({
         where: {
           id: Number(id),

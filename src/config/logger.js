@@ -1,8 +1,14 @@
-import winston from "winston";
+import winston, { format } from "winston";
+
+const { combine, timestamp, label, printf } = format;
+
+const myFormat = printf(({ level, message, label, timestamp }) => {
+  return `${timestamp} [${label}] ${level}: ${message}`;
+});
 
 const logger = winston.createLogger({
   level: "info",
-  format: winston.format.json(),
+  format: combine(label({ label: "right-meow!" }), timestamp(), myFormat),
   default: { service: "user-service" },
   transports: [
     new winston.transports.File({ filename: "error.log", level: "error" }),
@@ -10,4 +16,4 @@ const logger = winston.createLogger({
   ],
 });
 
-export default logger
+export default logger;

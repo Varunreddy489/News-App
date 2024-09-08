@@ -14,6 +14,8 @@ router.post("/auth/register", AuthController.register);
 router.get("/profile", authMiddleware, ProfileController.index);
 router.put("/profile/:id", authMiddleware, ProfileController.update);
 
+router.get("/send-email", AuthController.sendTestEmail);
+
 router.get("/news", authMiddleware, NewsController.index);
 router.post("/news", authMiddleware, NewsController.store);
 router.get("/news/:id", authMiddleware, NewsController.show);

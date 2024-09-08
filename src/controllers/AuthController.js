@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import vine, { errors } from "@vinejs/vine";
 
 import prisma from "../db/db.config.js";
+import { sendEmail } from "../config/mailer.js";
 import { loginSchema, registerSchema } from "../validations/authValidation.js";
 
 class AuthController {
@@ -90,7 +91,6 @@ class AuthController {
         return res.json({
           message: "Logged in",
           access_token: `Bearer ${token}`,
-          
         });
       }
 
@@ -110,6 +110,26 @@ class AuthController {
           message: "Something went wrong.Please try again.",
         });
       }
+    }
+  }
+
+  static async sendTestEmail(req, res) {
+    try {
+      const { email } = req.query;
+
+      const payload = {
+        toEmail: email,
+        subject: "Hey I am just testing",
+        body: "<h1>Hey I am just testing the email functionality  </h1>",
+      };
+
+      await sendEmail(payload.toEmail, payload.subject, payload.body);
+
+      return res.status(200).json({message:"Email sent successfully"})
+    } catch (error) {
+      console.log("The error in sendTestEmail", error);
+      loggers.email({ type: "Email error", body: error });
+      return res.status(400).json({ message: "Something went wrong" });
     }
   }
 }
