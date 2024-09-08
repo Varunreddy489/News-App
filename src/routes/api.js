@@ -1,5 +1,6 @@
 import Router from "express";
 
+import redisCache from "../db/redis.config.js";
 import authMiddleware from "../middleware/Authenticate.js";
 import AuthController from "../controllers/AuthController.js";
 import NewsController from "../controllers/NewsController.js";
